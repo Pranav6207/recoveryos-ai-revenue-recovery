@@ -17,3 +17,16 @@ test("a judge can execute a bounded recovery action", async ({ page }) => {
   await page.getByRole("button", { name: "Approve & execute bounded action" }).click();
   await expect(page.getByText("Promise-to-pay recorded")).toBeVisible();
 });
+
+test("workspace navigation and demo controls give visible feedback", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Start demo", exact: true }).click();
+  await expect(page.getByTestId("demo-status")).toContainText("Demo session started");
+  await expect(page.getByTestId("demo-run-badge")).toContainText("day 1 · active");
+  await expect(page.locator("header").getByRole("button", { name: "Restart demo", exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Batch analytics", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Batch analytics", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByTestId("demo-status")).toContainText("Batch analytics opened");
+});

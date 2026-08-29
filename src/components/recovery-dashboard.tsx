@@ -37,6 +37,20 @@ import type { AuditEvent, CaseStatus, RecoveryCase, RecoveryKind } from "@/lib/r
 const initialCases = createSeedCases();
 const initialAudit = createSeedAudit(initialCases);
 
+type WorkspaceView = "desk" | "analytics" | "cases" | "policy";
+
+const workspaceNavigation: Array<{
+  icon: typeof Gauge;
+  label: string;
+  sectionId: string;
+  view: WorkspaceView;
+}> = [
+  { icon: Gauge, label: "Recovery desk", sectionId: "recovery-desk", view: "desk" },
+  { icon: LineChart, label: "Batch analytics", sectionId: "batch-analytics", view: "analytics" },
+  { icon: FileText, label: "Cases & evidence", sectionId: "cases-evidence", view: "cases" },
+  { icon: ShieldCheck, label: "Policy controls", sectionId: "policy-controls", view: "policy" },
+];
+
 const statusStyles: Record<CaseStatus, string> = {
   at_risk: "border-amber-300 bg-amber-50 text-amber-800",
   in_progress: "border-sky-300 bg-sky-50 text-sky-800",
@@ -119,6 +133,9 @@ export default function RecoveryDashboard() {
   const [selectedId, setSelectedId] = useState(initialCases[0].id);
   const [kindFilter, setKindFilter] = useState<RecoveryKind | "all">("all");
   const [runId, setRunId] = useState("DEMO-7428");
+  const [activeView, setActiveView] = useState<WorkspaceView>("desk");
+  const [demoDay, setDemoDay] = useState(1);
+  const [hasStartedDemo, setHasStartedDemo] = useState(false);
   const [toast, setToast] = useState("Synthetic workspace ready. No external credentials required.");
 
   const selectedCase = cases.find((recoveryCase) => recoveryCase.id === selectedId) ?? cases[0];
@@ -145,15 +162,27 @@ export default function RecoveryDashboard() {
   );
 
   function startDemoRun() {
-    setCases(createSeedCases());
-    setAudit(createSeedAudit(createSeedCases()));
-    setSelectedId(initialCases[0].id);
+    const freshCases = createSeedCases();
+    setCases(freshCases);
+    setAudit(createSeedAudit(freshCases));
+    setSelectedId(freshCases[0].id);
     setRunId(`DEMO-${Math.floor(1000 + Math.random() * 8999)}`);
-    setToast("New isolated judge run created from the 120-case synthetic batch.");
+    setDemoDay(1);
+    setHasStartedDemo(true);
+    setActiveView("desk");
+    setToast("Demo session started. A fresh 120-case synthetic batch is ready for review.");
+    requestAnimationFrame(() => document.getElementById("recovery-desk")?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
 
   function advanceDemoTime() {
+    setDemoDay((day) => day + 1);
     setToast("Demo time moved forward one day. Due actions are ready for review; no silent outreach was sent.");
+  }
+
+  function navigateWorkspace(view: WorkspaceView, sectionId: string, label: string) {
+    setActiveView(view);
+    setToast(`${label} opened. The current demo run and audit evidence remain available.`);
+    requestAnimationFrame(() => document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
 
   function executeAction() {
@@ -205,18 +234,20 @@ export default function RecoveryDashboard() {
             </div>
           </div>
 
-          <nav className="mt-10 space-y-1 text-sm">
-            {[
-              [Gauge, "Recovery desk", true],
-              [LineChart, "Batch analytics", false],
-              [FileText, "Cases & evidence", false],
-              [ShieldCheck, "Policy controls", false],
-            ].map(([Icon, label, active]) => {
-              const NavIcon = Icon as typeof Gauge;
+          <nav className="mt-10 space-y-1 text-sm" aria-label="Workspace navigation">
+            {workspaceNavigation.map(({ icon: NavIcon, label, sectionId, view }) => {
+              const active = activeView === view;
               return (
-                <button key={label as string} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${active ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}>
+                <button
+                  key={view}
+                  type="button"
+                  aria-controls={sectionId}
+                  aria-current={active ? "page" : undefined}
+                  onClick={() => navigateWorkspace(view, sectionId, label)}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${active ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}
+                >
                   <NavIcon className="size-4" />
-                  {label as string}
+                  {label}
                 </button>
               );
             })}
@@ -225,8 +256,8 @@ export default function RecoveryDashboard() {
           <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-3.5">
             <div className="flex items-center gap-2 text-xs font-semibold text-white"><Sparkles className="size-4 text-[#f5b544]" />Judge-ready demo</div>
             <p className="mt-2 text-xs leading-5 text-slate-400">120 synthetic cases. Every workflow runs without payment, email, or voice credentials.</p>
-            <button onClick={startDemoRun} className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#f5b544] px-3 py-2 text-xs font-bold text-slate-950 transition hover:bg-[#ffd271]">
-              <RotateCcw className="size-3.5" /> Reset this run
+            <button type="button" onClick={startDemoRun} className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#f5b544] px-3 py-2 text-xs font-bold text-slate-950 transition hover:bg-[#ffd271]">
+              <RotateCcw className="size-3.5" /> Restart demo
             </button>
           </div>
         </aside>
@@ -241,15 +272,19 @@ export default function RecoveryDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 sm:inline-flex">{runId} · isolated demo</span>
-              <button onClick={advanceDemoTime} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"><Clock3 className="size-3.5" />Advance demo time</button>
-              <button onClick={startDemoRun} className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"><Play className="size-3.5 fill-current" />Start demo</button>
+              <span data-testid="demo-run-badge" className="hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 sm:inline-flex">{runId} · day {demoDay} · {hasStartedDemo ? "active" : "ready"}</span>
+              <button type="button" onClick={advanceDemoTime} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"><Clock3 className="size-3.5" />Advance demo time</button>
+              <button type="button" onClick={startDemoRun} className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"><Play className="size-3.5 fill-current" />{hasStartedDemo ? "Restart demo" : "Start demo"}</button>
             </div>
           </header>
 
-          <div className="px-5 py-6 sm:px-8 xl:px-10">
+          <div id="recovery-desk" className="px-5 py-6 sm:px-8 xl:px-10">
             <div className="rounded-2xl border border-amber-200 bg-[#fff8e8] px-4 py-3 text-sm text-amber-950 shadow-sm">
               <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-amber-700" /><p><span className="font-bold">Demo-safe workspace.</span> All data and outcomes are synthetic. The agent can recommend and execute only bounded, policy-approved simulator actions.</p></div>
+            </div>
+
+            <div data-testid="demo-status" role="status" aria-live="polite" className="mt-3 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-5 text-emerald-900 shadow-sm">
+              <CircleCheck className="mt-0.5 size-4 shrink-0 text-emerald-700" />{toast}
             </div>
 
             <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
@@ -269,7 +304,7 @@ export default function RecoveryDashboard() {
 
             <div className="mt-6 grid gap-6 2xl:grid-cols-[minmax(0,1.5fr)_minmax(390px,.8fr)]">
               <div className="min-w-0 space-y-6">
-                <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <section id="cases-evidence" className="scroll-mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
                     <div>
                       <div className="flex items-center gap-2"><div className="flex size-7 items-center justify-center rounded-lg bg-amber-100 text-amber-800"><Zap className="size-3.5 fill-current" /></div><h2 className="font-semibold text-slate-900">Recovery command queue</h2></div>
@@ -301,7 +336,7 @@ export default function RecoveryDashboard() {
                   </div>
                 </section>
 
-                <section className="grid gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[1fr_220px]">
+                <section id="batch-analytics" className="scroll-mt-5 grid gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[1fr_220px]">
                   <div>
                     <div className="flex items-center justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Recovered this week</p><h2 className="mt-1 text-lg font-semibold text-slate-900">Recovery momentum</h2></div><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">+31% vs baseline</span></div>
                     <div className="mt-4 h-32"><ResponsiveContainer width="100%" height="100%"><AreaChart data={recoveryTrend} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}><defs><linearGradient id="recoveryGradient" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#f5b544" stopOpacity={0.45} /><stop offset="100%" stopColor="#f5b544" stopOpacity={0.02} /></linearGradient></defs><XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "#64748b" }} dy={8} /><Tooltip cursor={{ stroke: "#cbd5e1", strokeDasharray: "3 3" }} contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }} formatter={(value) => [`₹${formatCurrency(Number(value) * 1000)}k`, "Recovered"]} /><Area type="monotone" dataKey="recovered" stroke="#c97900" strokeWidth={2.5} fill="url(#recoveryGradient)" /></AreaChart></ResponsiveContainer></div>
@@ -310,7 +345,7 @@ export default function RecoveryDashboard() {
                 </section>
               </div>
 
-              <aside className="min-w-0 rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <aside id="policy-controls" className="scroll-mt-5 min-w-0 rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <div className="border-b border-slate-100 p-5">
                   <div className="flex items-start justify-between gap-3"><div className="flex items-center gap-3"><Avatar initials={selectedCase.customerInitials} /><div><p className="text-sm font-semibold text-slate-900">{selectedCase.customer}</p><p className="text-xs text-slate-500">{selectedCase.id} · {selectedCase.segment}</p></div></div><StatusPill status={selectedCase.status} /></div>
                   <div className="mt-4 flex flex-wrap gap-2"><span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600">₹{formatCurrency(selectedCase.amountAtRisk)} at risk</span><span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600">{selectedCase.confidence}% AI confidence</span><span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600">{kindLabels[selectedCase.kind]}</span></div>
@@ -330,7 +365,6 @@ export default function RecoveryDashboard() {
               </aside>
             </div>
 
-            <div aria-live="polite" className="mt-5 flex items-start gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs leading-5 text-slate-600 shadow-sm"><CircleCheck className="mt-0.5 size-4 shrink-0 text-emerald-600" />{toast}</div>
           </div>
         </section>
       </div>
