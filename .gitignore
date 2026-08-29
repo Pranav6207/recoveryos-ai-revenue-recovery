@@ -42,3 +42,5 @@ next-env.d.ts
 
 # Microsoft Word temporary lock files
 ~$*.docx
+
+.vercel
