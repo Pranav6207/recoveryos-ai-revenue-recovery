@@ -1,0 +1,1193 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: judge-flow.spec.ts >> a judge can inspect recovery value and a policy block
+- Location: tests\e2e\judge-flow.spec.ts:3:5
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByText('Promise-to-pay is active')
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByText('Promise-to-pay is active')
+
+```
+
+```yaml
+- banner:
+  - link "RecoveryOSTest Mode":
+    - /url: /dashboard
+  - navigation:
+    - link "Dashboard":
+      - /url: /dashboard
+    - link "Cases":
+      - /url: /cases
+    - link "Playbooks":
+      - /url: /playbooks/payment_degradation
+    - link "Operations":
+      - /url: /operations
+    - link "Integration lab":
+      - /url: /integration-lab
+    - link "Verification":
+      - /url: /verification
+- main:
+  - paragraph: Cases & Evidence
+  - heading "Recovery Command Queue" [level=1]
+  - paragraph: Full 120-event synthetic batch. All actions require deterministic policy approval.
+  - text: Playbook
+  - combobox "Playbook":
+    - option "All playbooks" [selected]
+    - option "Payment degradation"
+    - option "Checkout drop-off"
+    - option "Subscription recovery"
+    - option "B2B receivable"
+    - option "Mandate retry"
+    - option "Hinglish voice"
+    - option "Promise-to-pay"
+  - text: Status
+  - combobox "Status":
+    - option "All statuses" [selected]
+    - option "At risk"
+    - option "In progress"
+    - option "Promise-to-pay"
+    - option "Recovered"
+    - option "Blocked"
+  - table:
+    - rowgroup:
+      - row "Case Playbook At risk Signal Status":
+        - columnheader "Case"
+        - columnheader "Playbook"
+        - columnheader "At risk"
+        - columnheader "Signal"
+        - columnheader "Status"
+    - rowgroup:
+      - row "REC-2439 Kavya Iyer B2B receivable ₹35,698 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2439 Kavya Iyer":
+          - link "REC-2439":
+            - /url: /cases/REC-2439
+          - paragraph: Kavya Iyer
+        - cell "B2B receivable"
+        - cell "₹35,698"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2484 Kunal Shah Promise-to-pay ₹19,893 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2484 Kunal Shah":
+          - link "REC-2484":
+            - /url: /cases/REC-2484
+          - paragraph: Kunal Shah
+        - cell "Promise-to-pay"
+        - cell "₹19,893"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2432 Rahul Verma B2B receivable ₹8,601 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2432 Rahul Verma":
+          - link "REC-2432":
+            - /url: /cases/REC-2432
+          - paragraph: Rahul Verma
+        - cell "B2B receivable"
+        - cell "₹8,601"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2477 Nisha Kapoor Promise-to-pay ₹30,796 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2477 Nisha Kapoor":
+          - link "REC-2477":
+            - /url: /cases/REC-2477
+          - paragraph: Nisha Kapoor
+        - cell "Promise-to-pay"
+        - cell "₹30,796"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2425 Ananya Rao B2B receivable ₹19,504 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2425 Ananya Rao":
+          - link "REC-2425":
+            - /url: /cases/REC-2425
+          - paragraph: Ananya Rao
+        - cell "B2B receivable"
+        - cell "₹19,504"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2470 Dev Malhotra Promise-to-pay ₹3,699 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2470 Dev Malhotra":
+          - link "REC-2470":
+            - /url: /cases/REC-2470
+          - paragraph: Dev Malhotra
+        - cell "Promise-to-pay"
+        - cell "₹3,699"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2515 Ishita Sen Subscription recovery ₹25,894 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2515 Ishita Sen":
+          - link "REC-2515":
+            - /url: /cases/REC-2515
+          - paragraph: Ishita Sen
+        - cell "Subscription recovery"
+        - cell "₹25,894"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2418 Vikram Nair B2B receivable ₹30,407 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2418 Vikram Nair":
+          - link "REC-2418":
+            - /url: /cases/REC-2418
+          - paragraph: Vikram Nair
+        - cell "B2B receivable"
+        - cell "₹30,407"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2463 Kavya Iyer Promise-to-pay ₹14,602 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2463 Kavya Iyer":
+          - link "REC-2463":
+            - /url: /cases/REC-2463
+          - paragraph: Kavya Iyer
+        - cell "Promise-to-pay"
+        - cell "₹14,602"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2508 Kunal Shah Subscription recovery ₹36,797 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2508 Kunal Shah":
+          - link "REC-2508":
+            - /url: /cases/REC-2508
+          - paragraph: Kunal Shah
+        - cell "Subscription recovery"
+        - cell "₹36,797"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2411 Priya Menon B2B receivable ₹3,310 Invoice INV-842 is overdue; last reminder was acknowledged. recovered":
+        - cell "REC-2411 Priya Menon":
+          - link "REC-2411":
+            - /url: /cases/REC-2411
+          - paragraph: Priya Menon
+        - cell "B2B receivable"
+        - cell "₹3,310"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "recovered"
+      - row "REC-2456 Rahul Verma Promise-to-pay ₹25,505 Promise recorded for INR 18,400; no captured payment yet. recovered":
+        - cell "REC-2456 Rahul Verma":
+          - link "REC-2456":
+            - /url: /cases/REC-2456
+          - paragraph: Rahul Verma
+        - cell "Promise-to-pay"
+        - cell "₹25,505"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "recovered"
+      - row "REC-2501 Nisha Kapoor Subscription recovery ₹9,700 subscription.pending received; provider retry is due tomorrow. recovered":
+        - cell "REC-2501 Nisha Kapoor":
+          - link "REC-2501":
+            - /url: /cases/REC-2501
+          - paragraph: Nisha Kapoor
+        - cell "Subscription recovery"
+        - cell "₹9,700"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "recovered"
+      - row "REC-2404 Aarav Sharma B2B receivable ₹14,213 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2404 Aarav Sharma":
+          - link "REC-2404":
+            - /url: /cases/REC-2404
+          - paragraph: Aarav Sharma
+        - cell "B2B receivable"
+        - cell "₹14,213"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2449 Ananya Rao Promise-to-pay ₹36,408 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2449 Ananya Rao":
+          - link "REC-2449":
+            - /url: /cases/REC-2449
+          - paragraph: Ananya Rao
+        - cell "Promise-to-pay"
+        - cell "₹36,408"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2494 Dev Malhotra Subscription recovery ₹20,603 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2494 Dev Malhotra":
+          - link "REC-2494":
+            - /url: /cases/REC-2494
+          - paragraph: Dev Malhotra
+        - cell "Subscription recovery"
+        - cell "₹20,603"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2442 Vikram Nair Promise-to-pay ₹9,311 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2442 Vikram Nair":
+          - link "REC-2442":
+            - /url: /cases/REC-2442
+          - paragraph: Vikram Nair
+        - cell "Promise-to-pay"
+        - cell "₹9,311"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2487 Kavya Iyer Subscription recovery ₹31,506 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2487 Kavya Iyer":
+          - link "REC-2487":
+            - /url: /cases/REC-2487
+          - paragraph: Kavya Iyer
+        - cell "Subscription recovery"
+        - cell "₹31,506"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2435 Priya Menon Promise-to-pay ₹20,214 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2435 Priya Menon":
+          - link "REC-2435":
+            - /url: /cases/REC-2435
+          - paragraph: Priya Menon
+        - cell "Promise-to-pay"
+        - cell "₹20,214"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2480 Rahul Verma Subscription recovery ₹4,409 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2480 Rahul Verma":
+          - link "REC-2480":
+            - /url: /cases/REC-2480
+          - paragraph: Rahul Verma
+        - cell "Subscription recovery"
+        - cell "₹4,409"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2428 Aarav Sharma Promise-to-pay ₹31,117 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2428 Aarav Sharma":
+          - link "REC-2428":
+            - /url: /cases/REC-2428
+          - paragraph: Aarav Sharma
+        - cell "Promise-to-pay"
+        - cell "₹31,117"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2473 Ananya Rao Subscription recovery ₹15,312 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2473 Ananya Rao":
+          - link "REC-2473":
+            - /url: /cases/REC-2473
+          - paragraph: Ananya Rao
+        - cell "Subscription recovery"
+        - cell "₹15,312"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2518 Dev Malhotra Hinglish voice ₹37,507 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2518 Dev Malhotra":
+          - link "REC-2518":
+            - /url: /cases/REC-2518
+          - paragraph: Dev Malhotra
+        - cell "Hinglish voice"
+        - cell "₹37,507"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2421 Meera Joshi Promise-to-pay ₹4,020 Promise recorded for INR 18,400; no captured payment yet. recovered":
+        - cell "REC-2421 Meera Joshi":
+          - link "REC-2421":
+            - /url: /cases/REC-2421
+          - paragraph: Meera Joshi
+        - cell "Promise-to-pay"
+        - cell "₹4,020"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "recovered"
+      - row "REC-2466 Vikram Nair Subscription recovery ₹26,215 subscription.pending received; provider retry is due tomorrow. recovered":
+        - cell "REC-2466 Vikram Nair":
+          - link "REC-2466":
+            - /url: /cases/REC-2466
+          - paragraph: Vikram Nair
+        - cell "Subscription recovery"
+        - cell "₹26,215"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "recovered"
+      - row "REC-2511 Kavya Iyer Hinglish voice ₹10,410 Customer has consented to a phone callback and prefers Hinglish support. recovered":
+        - cell "REC-2511 Kavya Iyer":
+          - link "REC-2511":
+            - /url: /cases/REC-2511
+          - paragraph: Kavya Iyer
+        - cell "Hinglish voice"
+        - cell "₹10,410"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "recovered"
+      - row "REC-2414 Rohan Mehta Promise-to-pay ₹14,923 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2414 Rohan Mehta":
+          - link "REC-2414":
+            - /url: /cases/REC-2414
+          - paragraph: Rohan Mehta
+        - cell "Promise-to-pay"
+        - cell "₹14,923"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2459 Priya Menon Subscription recovery ₹37,118 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2459 Priya Menon":
+          - link "REC-2459":
+            - /url: /cases/REC-2459
+          - paragraph: Priya Menon
+        - cell "Subscription recovery"
+        - cell "₹37,118"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2504 Rahul Verma Hinglish voice ₹21,313 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2504 Rahul Verma":
+          - link "REC-2504":
+            - /url: /cases/REC-2504
+          - paragraph: Rahul Verma
+        - cell "Hinglish voice"
+        - cell "₹21,313"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2407 Ishita Sen Promise-to-pay ₹25,826 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2407 Ishita Sen":
+          - link "REC-2407":
+            - /url: /cases/REC-2407
+          - paragraph: Ishita Sen
+        - cell "Promise-to-pay"
+        - cell "₹25,826"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2452 Aarav Sharma Subscription recovery ₹10,021 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2452 Aarav Sharma":
+          - link "REC-2452":
+            - /url: /cases/REC-2452
+          - paragraph: Aarav Sharma
+        - cell "Subscription recovery"
+        - cell "₹10,021"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2497 Ananya Rao Hinglish voice ₹32,216 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2497 Ananya Rao":
+          - link "REC-2497":
+            - /url: /cases/REC-2497
+          - paragraph: Ananya Rao
+        - cell "Hinglish voice"
+        - cell "₹32,216"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2445 Meera Joshi Subscription recovery ₹20,924 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2445 Meera Joshi":
+          - link "REC-2445":
+            - /url: /cases/REC-2445
+          - paragraph: Meera Joshi
+        - cell "Subscription recovery"
+        - cell "₹20,924"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2490 Vikram Nair Hinglish voice ₹5,119 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2490 Vikram Nair":
+          - link "REC-2490":
+            - /url: /cases/REC-2490
+          - paragraph: Vikram Nair
+        - cell "Hinglish voice"
+        - cell "₹5,119"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2438 Rohan Mehta Subscription recovery ₹31,827 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2438 Rohan Mehta":
+          - link "REC-2438":
+            - /url: /cases/REC-2438
+          - paragraph: Rohan Mehta
+        - cell "Subscription recovery"
+        - cell "₹31,827"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2483 Priya Menon Hinglish voice ₹16,022 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2483 Priya Menon":
+          - link "REC-2483":
+            - /url: /cases/REC-2483
+          - paragraph: Priya Menon
+        - cell "Hinglish voice"
+        - cell "₹16,022"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2431 Ishita Sen Subscription recovery ₹4,730 subscription.pending received; provider retry is due tomorrow. recovered":
+        - cell "REC-2431 Ishita Sen":
+          - link "REC-2431":
+            - /url: /cases/REC-2431
+          - paragraph: Ishita Sen
+        - cell "Subscription recovery"
+        - cell "₹4,730"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "recovered"
+      - row "REC-2476 Aarav Sharma Hinglish voice ₹26,925 Customer has consented to a phone callback and prefers Hinglish support. recovered":
+        - cell "REC-2476 Aarav Sharma":
+          - link "REC-2476":
+            - /url: /cases/REC-2476
+          - paragraph: Aarav Sharma
+        - cell "Hinglish voice"
+        - cell "₹26,925"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "recovered"
+      - row "REC-2424 Kunal Shah Subscription recovery ₹15,633 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2424 Kunal Shah":
+          - link "REC-2424":
+            - /url: /cases/REC-2424
+          - paragraph: Kunal Shah
+        - cell "Subscription recovery"
+        - cell "₹15,633"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2469 Meera Joshi Hinglish voice ₹37,828 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2469 Meera Joshi":
+          - link "REC-2469":
+            - /url: /cases/REC-2469
+          - paragraph: Meera Joshi
+        - cell "Hinglish voice"
+        - cell "₹37,828"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2514 Vikram Nair Checkout drop-off ₹22,023 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2514 Vikram Nair":
+          - link "REC-2514":
+            - /url: /cases/REC-2514
+          - paragraph: Vikram Nair
+        - cell "Checkout drop-off"
+        - cell "₹22,023"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2417 Nisha Kapoor Subscription recovery ₹26,536 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2417 Nisha Kapoor":
+          - link "REC-2417":
+            - /url: /cases/REC-2417
+          - paragraph: Nisha Kapoor
+        - cell "Subscription recovery"
+        - cell "₹26,536"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2462 Rohan Mehta Hinglish voice ₹10,731 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2462 Rohan Mehta":
+          - link "REC-2462":
+            - /url: /cases/REC-2462
+          - paragraph: Rohan Mehta
+        - cell "Hinglish voice"
+        - cell "₹10,731"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2507 Priya Menon Checkout drop-off ₹32,926 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2507 Priya Menon":
+          - link "REC-2507":
+            - /url: /cases/REC-2507
+          - paragraph: Priya Menon
+        - cell "Checkout drop-off"
+        - cell "₹32,926"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2410 Dev Malhotra Subscription recovery ₹37,439 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2410 Dev Malhotra":
+          - link "REC-2410":
+            - /url: /cases/REC-2410
+          - paragraph: Dev Malhotra
+        - cell "Subscription recovery"
+        - cell "₹37,439"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2455 Ishita Sen Hinglish voice ₹21,634 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2455 Ishita Sen":
+          - link "REC-2455":
+            - /url: /cases/REC-2455
+          - paragraph: Ishita Sen
+        - cell "Hinglish voice"
+        - cell "₹21,634"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2500 Aarav Sharma Checkout drop-off ₹5,829 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2500 Aarav Sharma":
+          - link "REC-2500":
+            - /url: /cases/REC-2500
+          - paragraph: Aarav Sharma
+        - cell "Checkout drop-off"
+        - cell "₹5,829"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2403 Kavya Iyer Subscription recovery ₹10,342 subscription.pending received; provider retry is due tomorrow. at risk":
+        - cell "REC-2403 Kavya Iyer":
+          - link "REC-2403":
+            - /url: /cases/REC-2403
+          - paragraph: Kavya Iyer
+        - cell "Subscription recovery"
+        - cell "₹10,342"
+        - cell "subscription.pending received; provider retry is due tomorrow."
+        - cell "at risk"
+      - row "REC-2448 Kunal Shah Hinglish voice ₹32,537 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2448 Kunal Shah":
+          - link "REC-2448":
+            - /url: /cases/REC-2448
+          - paragraph: Kunal Shah
+        - cell "Hinglish voice"
+        - cell "₹32,537"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2493 Meera Joshi Checkout drop-off ₹16,732 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2493 Meera Joshi":
+          - link "REC-2493":
+            - /url: /cases/REC-2493
+          - paragraph: Meera Joshi
+        - cell "Checkout drop-off"
+        - cell "₹16,732"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2441 Nisha Kapoor Hinglish voice ₹5,440 Customer has consented to a phone callback and prefers Hinglish support. recovered":
+        - cell "REC-2441 Nisha Kapoor":
+          - link "REC-2441":
+            - /url: /cases/REC-2441
+          - paragraph: Nisha Kapoor
+        - cell "Hinglish voice"
+        - cell "₹5,440"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "recovered"
+      - row "REC-2486 Rohan Mehta Checkout drop-off ₹27,635 Checkout idle for 24 minutes; payment attempt has not been captured. recovered":
+        - cell "REC-2486 Rohan Mehta":
+          - link "REC-2486":
+            - /url: /cases/REC-2486
+          - paragraph: Rohan Mehta
+        - cell "Checkout drop-off"
+        - cell "₹27,635"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "recovered"
+      - row "REC-2434 Dev Malhotra Hinglish voice ₹16,343 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2434 Dev Malhotra":
+          - link "REC-2434":
+            - /url: /cases/REC-2434
+          - paragraph: Dev Malhotra
+        - cell "Hinglish voice"
+        - cell "₹16,343"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2479 Ishita Sen Checkout drop-off ₹38,538 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2479 Ishita Sen":
+          - link "REC-2479":
+            - /url: /cases/REC-2479
+          - paragraph: Ishita Sen
+        - cell "Checkout drop-off"
+        - cell "₹38,538"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2427 Kavya Iyer Hinglish voice ₹27,246 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2427 Kavya Iyer":
+          - link "REC-2427":
+            - /url: /cases/REC-2427
+          - paragraph: Kavya Iyer
+        - cell "Hinglish voice"
+        - cell "₹27,246"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2472 Kunal Shah Checkout drop-off ₹11,441 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2472 Kunal Shah":
+          - link "REC-2472":
+            - /url: /cases/REC-2472
+          - paragraph: Kunal Shah
+        - cell "Checkout drop-off"
+        - cell "₹11,441"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2517 Meera Joshi Mandate retry ₹33,636 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2517 Meera Joshi":
+          - link "REC-2517":
+            - /url: /cases/REC-2517
+          - paragraph: Meera Joshi
+        - cell "Mandate retry"
+        - cell "₹33,636"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2420 Rahul Verma Hinglish voice ₹38,149 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2420 Rahul Verma":
+          - link "REC-2420":
+            - /url: /cases/REC-2420
+          - paragraph: Rahul Verma
+        - cell "Hinglish voice"
+        - cell "₹38,149"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2465 Nisha Kapoor Checkout drop-off ₹22,344 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2465 Nisha Kapoor":
+          - link "REC-2465":
+            - /url: /cases/REC-2465
+          - paragraph: Nisha Kapoor
+        - cell "Checkout drop-off"
+        - cell "₹22,344"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2510 Rohan Mehta Mandate retry ₹6,539 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2510 Rohan Mehta":
+          - link "REC-2510":
+            - /url: /cases/REC-2510
+          - paragraph: Rohan Mehta
+        - cell "Mandate retry"
+        - cell "₹6,539"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2413 Ananya Rao Hinglish voice ₹11,052 Customer has consented to a phone callback and prefers Hinglish support. at risk":
+        - cell "REC-2413 Ananya Rao":
+          - link "REC-2413":
+            - /url: /cases/REC-2413
+          - paragraph: Ananya Rao
+        - cell "Hinglish voice"
+        - cell "₹11,052"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "at risk"
+      - row "REC-2458 Dev Malhotra Checkout drop-off ₹33,247 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2458 Dev Malhotra":
+          - link "REC-2458":
+            - /url: /cases/REC-2458
+          - paragraph: Dev Malhotra
+        - cell "Checkout drop-off"
+        - cell "₹33,247"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2503 Ishita Sen Mandate retry ₹17,442 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2503 Ishita Sen":
+          - link "REC-2503":
+            - /url: /cases/REC-2503
+          - paragraph: Ishita Sen
+        - cell "Mandate retry"
+        - cell "₹17,442"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2406 Vikram Nair Hinglish voice ₹21,955 Customer has consented to a phone callback and prefers Hinglish support. recovered":
+        - cell "REC-2406 Vikram Nair":
+          - link "REC-2406":
+            - /url: /cases/REC-2406
+          - paragraph: Vikram Nair
+        - cell "Hinglish voice"
+        - cell "₹21,955"
+        - cell "Customer has consented to a phone callback and prefers Hinglish support."
+        - cell "recovered"
+      - row "REC-2451 Kavya Iyer Checkout drop-off ₹6,150 Checkout idle for 24 minutes; payment attempt has not been captured. recovered":
+        - cell "REC-2451 Kavya Iyer":
+          - link "REC-2451":
+            - /url: /cases/REC-2451
+          - paragraph: Kavya Iyer
+        - cell "Checkout drop-off"
+        - cell "₹6,150"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "recovered"
+      - row "REC-2496 Kunal Shah Mandate retry ₹28,345 Provider retry model permits a next retry window tomorrow at 11:00 AM. recovered":
+        - cell "REC-2496 Kunal Shah":
+          - link "REC-2496":
+            - /url: /cases/REC-2496
+          - paragraph: Kunal Shah
+        - cell "Mandate retry"
+        - cell "₹28,345"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "recovered"
+      - row "REC-2444 Rahul Verma Checkout drop-off ₹17,053 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2444 Rahul Verma":
+          - link "REC-2444":
+            - /url: /cases/REC-2444
+          - paragraph: Rahul Verma
+        - cell "Checkout drop-off"
+        - cell "₹17,053"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2489 Nisha Kapoor Mandate retry ₹39,248 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2489 Nisha Kapoor":
+          - link "REC-2489":
+            - /url: /cases/REC-2489
+          - paragraph: Nisha Kapoor
+        - cell "Mandate retry"
+        - cell "₹39,248"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2437 Ananya Rao Checkout drop-off ₹27,956 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2437 Ananya Rao":
+          - link "REC-2437":
+            - /url: /cases/REC-2437
+          - paragraph: Ananya Rao
+        - cell "Checkout drop-off"
+        - cell "₹27,956"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2482 Dev Malhotra Mandate retry ₹12,151 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2482 Dev Malhotra":
+          - link "REC-2482":
+            - /url: /cases/REC-2482
+          - paragraph: Dev Malhotra
+        - cell "Mandate retry"
+        - cell "₹12,151"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2430 Vikram Nair Checkout drop-off ₹38,859 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2430 Vikram Nair":
+          - link "REC-2430":
+            - /url: /cases/REC-2430
+          - paragraph: Vikram Nair
+        - cell "Checkout drop-off"
+        - cell "₹38,859"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2475 Kavya Iyer Mandate retry ₹23,054 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2475 Kavya Iyer":
+          - link "REC-2475":
+            - /url: /cases/REC-2475
+          - paragraph: Kavya Iyer
+        - cell "Mandate retry"
+        - cell "₹23,054"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2520 Kunal Shah Payment degradation ₹7,249 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2520 Kunal Shah":
+          - link "REC-2520":
+            - /url: /cases/REC-2520
+          - paragraph: Kunal Shah
+        - cell "Payment degradation"
+        - cell "₹7,249"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2423 Priya Menon Checkout drop-off ₹11,762 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2423 Priya Menon":
+          - link "REC-2423":
+            - /url: /cases/REC-2423
+          - paragraph: Priya Menon
+        - cell "Checkout drop-off"
+        - cell "₹11,762"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2468 Rahul Verma Mandate retry ₹33,957 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2468 Rahul Verma":
+          - link "REC-2468":
+            - /url: /cases/REC-2468
+          - paragraph: Rahul Verma
+        - cell "Mandate retry"
+        - cell "₹33,957"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2513 Nisha Kapoor Payment degradation ₹18,152 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2513 Nisha Kapoor":
+          - link "REC-2513":
+            - /url: /cases/REC-2513
+          - paragraph: Nisha Kapoor
+        - cell "Payment degradation"
+        - cell "₹18,152"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2416 Aarav Sharma Checkout drop-off ₹22,665 Checkout idle for 24 minutes; payment attempt has not been captured. recovered":
+        - cell "REC-2416 Aarav Sharma":
+          - link "REC-2416":
+            - /url: /cases/REC-2416
+          - paragraph: Aarav Sharma
+        - cell "Checkout drop-off"
+        - cell "₹22,665"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "recovered"
+      - row "REC-2461 Ananya Rao Mandate retry ₹6,860 Provider retry model permits a next retry window tomorrow at 11:00 AM. recovered":
+        - cell "REC-2461 Ananya Rao":
+          - link "REC-2461":
+            - /url: /cases/REC-2461
+          - paragraph: Ananya Rao
+        - cell "Mandate retry"
+        - cell "₹6,860"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "recovered"
+      - row "REC-2506 Dev Malhotra Payment degradation ₹29,055 Payment authorization failed twice after a gateway latency spike. recovered":
+        - cell "REC-2506 Dev Malhotra":
+          - link "REC-2506":
+            - /url: /cases/REC-2506
+          - paragraph: Dev Malhotra
+        - cell "Payment degradation"
+        - cell "₹29,055"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "recovered"
+      - row "REC-2409 Meera Joshi Checkout drop-off ₹33,568 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2409 Meera Joshi":
+          - link "REC-2409":
+            - /url: /cases/REC-2409
+          - paragraph: Meera Joshi
+        - cell "Checkout drop-off"
+        - cell "₹33,568"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2454 Vikram Nair Mandate retry ₹17,763 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2454 Vikram Nair":
+          - link "REC-2454":
+            - /url: /cases/REC-2454
+          - paragraph: Vikram Nair
+        - cell "Mandate retry"
+        - cell "₹17,763"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2499 Kavya Iyer Payment degradation ₹39,958 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2499 Kavya Iyer":
+          - link "REC-2499":
+            - /url: /cases/REC-2499
+          - paragraph: Kavya Iyer
+        - cell "Payment degradation"
+        - cell "₹39,958"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2402 Rohan Mehta Checkout drop-off ₹6,471 Checkout idle for 24 minutes; payment attempt has not been captured. at risk":
+        - cell "REC-2402 Rohan Mehta":
+          - link "REC-2402":
+            - /url: /cases/REC-2402
+          - paragraph: Rohan Mehta
+        - cell "Checkout drop-off"
+        - cell "₹6,471"
+        - cell "Checkout idle for 24 minutes; payment attempt has not been captured."
+        - cell "at risk"
+      - row "REC-2447 Priya Menon Mandate retry ₹28,666 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2447 Priya Menon":
+          - link "REC-2447":
+            - /url: /cases/REC-2447
+          - paragraph: Priya Menon
+        - cell "Mandate retry"
+        - cell "₹28,666"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2492 Rahul Verma Payment degradation ₹12,861 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2492 Rahul Verma":
+          - link "REC-2492":
+            - /url: /cases/REC-2492
+          - paragraph: Rahul Verma
+        - cell "Payment degradation"
+        - cell "₹12,861"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2440 Aarav Sharma Mandate retry ₹39,569 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2440 Aarav Sharma":
+          - link "REC-2440":
+            - /url: /cases/REC-2440
+          - paragraph: Aarav Sharma
+        - cell "Mandate retry"
+        - cell "₹39,569"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2485 Ananya Rao Payment degradation ₹23,764 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2485 Ananya Rao":
+          - link "REC-2485":
+            - /url: /cases/REC-2485
+          - paragraph: Ananya Rao
+        - cell "Payment degradation"
+        - cell "₹23,764"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2433 Meera Joshi Mandate retry ₹12,472 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2433 Meera Joshi":
+          - link "REC-2433":
+            - /url: /cases/REC-2433
+          - paragraph: Meera Joshi
+        - cell "Mandate retry"
+        - cell "₹12,472"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2478 Vikram Nair Payment degradation ₹34,667 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2478 Vikram Nair":
+          - link "REC-2478":
+            - /url: /cases/REC-2478
+          - paragraph: Vikram Nair
+        - cell "Payment degradation"
+        - cell "₹34,667"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2426 Rohan Mehta Mandate retry ₹23,375 Provider retry model permits a next retry window tomorrow at 11:00 AM. recovered":
+        - cell "REC-2426 Rohan Mehta":
+          - link "REC-2426":
+            - /url: /cases/REC-2426
+          - paragraph: Rohan Mehta
+        - cell "Mandate retry"
+        - cell "₹23,375"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "recovered"
+      - row "REC-2471 Priya Menon Payment degradation ₹7,570 Payment authorization failed twice after a gateway latency spike. recovered":
+        - cell "REC-2471 Priya Menon":
+          - link "REC-2471":
+            - /url: /cases/REC-2471
+          - paragraph: Priya Menon
+        - cell "Payment degradation"
+        - cell "₹7,570"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "recovered"
+      - row "REC-2516 Rahul Verma B2B receivable ₹29,765 Invoice INV-842 is overdue; last reminder was acknowledged. recovered":
+        - cell "REC-2516 Rahul Verma":
+          - link "REC-2516":
+            - /url: /cases/REC-2516
+          - paragraph: Rahul Verma
+        - cell "B2B receivable"
+        - cell "₹29,765"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "recovered"
+      - row "REC-2419 Ishita Sen Mandate retry ₹34,278 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2419 Ishita Sen":
+          - link "REC-2419":
+            - /url: /cases/REC-2419
+          - paragraph: Ishita Sen
+        - cell "Mandate retry"
+        - cell "₹34,278"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2464 Aarav Sharma Payment degradation ₹18,473 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2464 Aarav Sharma":
+          - link "REC-2464":
+            - /url: /cases/REC-2464
+          - paragraph: Aarav Sharma
+        - cell "Payment degradation"
+        - cell "₹18,473"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2509 Ananya Rao B2B receivable ₹2,668 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2509 Ananya Rao":
+          - link "REC-2509":
+            - /url: /cases/REC-2509
+          - paragraph: Ananya Rao
+        - cell "B2B receivable"
+        - cell "₹2,668"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2412 Kunal Shah Mandate retry ₹7,181 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2412 Kunal Shah":
+          - link "REC-2412":
+            - /url: /cases/REC-2412
+          - paragraph: Kunal Shah
+        - cell "Mandate retry"
+        - cell "₹7,181"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2457 Meera Joshi Payment degradation ₹29,376 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2457 Meera Joshi":
+          - link "REC-2457":
+            - /url: /cases/REC-2457
+          - paragraph: Meera Joshi
+        - cell "Payment degradation"
+        - cell "₹29,376"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2502 Vikram Nair B2B receivable ₹13,571 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2502 Vikram Nair":
+          - link "REC-2502":
+            - /url: /cases/REC-2502
+          - paragraph: Vikram Nair
+        - cell "B2B receivable"
+        - cell "₹13,571"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2405 Nisha Kapoor Mandate retry ₹18,084 Provider retry model permits a next retry window tomorrow at 11:00 AM. at risk":
+        - cell "REC-2405 Nisha Kapoor":
+          - link "REC-2405":
+            - /url: /cases/REC-2405
+          - paragraph: Nisha Kapoor
+        - cell "Mandate retry"
+        - cell "₹18,084"
+        - cell "Provider retry model permits a next retry window tomorrow at 11:00 AM."
+        - cell "at risk"
+      - row "REC-2450 Rohan Mehta Payment degradation ₹40,279 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2450 Rohan Mehta":
+          - link "REC-2450":
+            - /url: /cases/REC-2450
+          - paragraph: Rohan Mehta
+        - cell "Payment degradation"
+        - cell "₹40,279"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2495 Priya Menon B2B receivable ₹24,474 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2495 Priya Menon":
+          - link "REC-2495":
+            - /url: /cases/REC-2495
+          - paragraph: Priya Menon
+        - cell "B2B receivable"
+        - cell "₹24,474"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2443 Ishita Sen Payment degradation ₹13,182 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2443 Ishita Sen":
+          - link "REC-2443":
+            - /url: /cases/REC-2443
+          - paragraph: Ishita Sen
+        - cell "Payment degradation"
+        - cell "₹13,182"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2488 Aarav Sharma B2B receivable ₹35,377 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2488 Aarav Sharma":
+          - link "REC-2488":
+            - /url: /cases/REC-2488
+          - paragraph: Aarav Sharma
+        - cell "B2B receivable"
+        - cell "₹35,377"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2436 Kunal Shah Payment degradation ₹24,085 Payment authorization failed twice after a gateway latency spike. recovered":
+        - cell "REC-2436 Kunal Shah":
+          - link "REC-2436":
+            - /url: /cases/REC-2436
+          - paragraph: Kunal Shah
+        - cell "Payment degradation"
+        - cell "₹24,085"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "recovered"
+      - row "REC-2481 Meera Joshi B2B receivable ₹8,280 Invoice INV-842 is overdue; last reminder was acknowledged. recovered":
+        - cell "REC-2481 Meera Joshi":
+          - link "REC-2481":
+            - /url: /cases/REC-2481
+          - paragraph: Meera Joshi
+        - cell "B2B receivable"
+        - cell "₹8,280"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "recovered"
+      - row "REC-2429 Nisha Kapoor Payment degradation ₹34,988 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2429 Nisha Kapoor":
+          - link "REC-2429":
+            - /url: /cases/REC-2429
+          - paragraph: Nisha Kapoor
+        - cell "Payment degradation"
+        - cell "₹34,988"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2474 Rohan Mehta B2B receivable ₹19,183 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2474 Rohan Mehta":
+          - link "REC-2474":
+            - /url: /cases/REC-2474
+          - paragraph: Rohan Mehta
+        - cell "B2B receivable"
+        - cell "₹19,183"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2519 Priya Menon Promise-to-pay ₹3,378 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2519 Priya Menon":
+          - link "REC-2519":
+            - /url: /cases/REC-2519
+          - paragraph: Priya Menon
+        - cell "Promise-to-pay"
+        - cell "₹3,378"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2422 Dev Malhotra Payment degradation ₹7,891 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2422 Dev Malhotra":
+          - link "REC-2422":
+            - /url: /cases/REC-2422
+          - paragraph: Dev Malhotra
+        - cell "Payment degradation"
+        - cell "₹7,891"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2467 Ishita Sen B2B receivable ₹30,086 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2467 Ishita Sen":
+          - link "REC-2467":
+            - /url: /cases/REC-2467
+          - paragraph: Ishita Sen
+        - cell "B2B receivable"
+        - cell "₹30,086"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2512 Aarav Sharma Promise-to-pay ₹14,281 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2512 Aarav Sharma":
+          - link "REC-2512":
+            - /url: /cases/REC-2512
+          - paragraph: Aarav Sharma
+        - cell "Promise-to-pay"
+        - cell "₹14,281"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2415 Kavya Iyer Payment degradation ₹18,794 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2415 Kavya Iyer":
+          - link "REC-2415":
+            - /url: /cases/REC-2415
+          - paragraph: Kavya Iyer
+        - cell "Payment degradation"
+        - cell "₹18,794"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2460 Kunal Shah B2B receivable ₹2,989 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2460 Kunal Shah":
+          - link "REC-2460":
+            - /url: /cases/REC-2460
+          - paragraph: Kunal Shah
+        - cell "B2B receivable"
+        - cell "₹2,989"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2505 Meera Joshi Promise-to-pay ₹25,184 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2505 Meera Joshi":
+          - link "REC-2505":
+            - /url: /cases/REC-2505
+          - paragraph: Meera Joshi
+        - cell "Promise-to-pay"
+        - cell "₹25,184"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2408 Rahul Verma Payment degradation ₹29,697 Payment authorization failed twice after a gateway latency spike. at risk":
+        - cell "REC-2408 Rahul Verma":
+          - link "REC-2408":
+            - /url: /cases/REC-2408
+          - paragraph: Rahul Verma
+        - cell "Payment degradation"
+        - cell "₹29,697"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "at risk"
+      - row "REC-2453 Nisha Kapoor B2B receivable ₹13,892 Invoice INV-842 is overdue; last reminder was acknowledged. at risk":
+        - cell "REC-2453 Nisha Kapoor":
+          - link "REC-2453":
+            - /url: /cases/REC-2453
+          - paragraph: Nisha Kapoor
+        - cell "B2B receivable"
+        - cell "₹13,892"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "at risk"
+      - row "REC-2498 Rohan Mehta Promise-to-pay ₹36,087 Promise recorded for INR 18,400; no captured payment yet. promise to pay":
+        - cell "REC-2498 Rohan Mehta":
+          - link "REC-2498":
+            - /url: /cases/REC-2498
+          - paragraph: Rohan Mehta
+        - cell "Promise-to-pay"
+        - cell "₹36,087"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "promise to pay"
+      - row "REC-2401 Ananya Rao Payment degradation ₹2,600 Payment authorization failed twice after a gateway latency spike. recovered":
+        - cell "REC-2401 Ananya Rao":
+          - link "REC-2401":
+            - /url: /cases/REC-2401
+          - paragraph: Ananya Rao
+        - cell "Payment degradation"
+        - cell "₹2,600"
+        - cell "Payment authorization failed twice after a gateway latency spike."
+        - cell "recovered"
+      - row "REC-2446 Dev Malhotra B2B receivable ₹24,795 Invoice INV-842 is overdue; last reminder was acknowledged. recovered":
+        - cell "REC-2446 Dev Malhotra":
+          - link "REC-2446":
+            - /url: /cases/REC-2446
+          - paragraph: Dev Malhotra
+        - cell "B2B receivable"
+        - cell "₹24,795"
+        - cell "Invoice INV-842 is overdue; last reminder was acknowledged."
+        - cell "recovered"
+      - row "REC-2491 Ishita Sen Promise-to-pay ₹8,990 Promise recorded for INR 18,400; no captured payment yet. recovered":
+        - cell "REC-2491 Ishita Sen":
+          - link "REC-2491":
+            - /url: /cases/REC-2491
+          - paragraph: Ishita Sen
+        - cell "Promise-to-pay"
+        - cell "₹8,990"
+        - cell "Promise recorded for INR 18,400; no captured payment yet."
+        - cell "recovered"
+- alert
+```
+
+# Test source
+
+```ts
+  1  | import { expect, test } from "@playwright/test";
+  2  | 
+  3  | test("a judge can inspect recovery value and a policy block", async ({ page }) => {
+  4  |   await page.goto("/dashboard");
+  5  |   await expect(page.getByRole("heading", { name: /Turn risk signals into recovered revenue/i })).toBeVisible();
+  6  |   
+  7  |   // Go to all cases
+  8  |   await page.goto("/cases");
+  9  |   await page.getByTestId("case-row-REC-2484").click();
+  10 |   
+  11 |   // Verify policy details
+> 12 |   await expect(page.getByText("Promise-to-pay is active")).toBeVisible();
+     |                                                            ^ Error: expect(locator).toBeVisible() failed
+  13 |   await page.getByRole("button", { name: "Action blocked by policy" }).click();
+  14 |   // It shouldn't navigate or execute, the button should just be disabled or blocked
+  15 |   await expect(page.getByRole("button", { name: "Action blocked by policy" })).toBeDisabled();
+  16 | });
+  17 | 
+  18 | test("a judge can execute a bounded recovery action", async ({ page }) => {
+  19 |   await page.goto("/cases/REC-2439");
+  20 |   await page.getByRole("button", { name: "Approve & execute bounded action" }).click();
+  21 |   await expect(page.getByText("Promise-to-pay recorded", { exact: false })).toBeVisible();
+  22 | });
+  23 | 
+  24 | test("workspace navigation and demo controls give visible feedback", async ({ page }) => {
+  25 |   await page.goto("/");
+  26 | 
+  27 |   await page.getByRole("button", { name: "Launch workspace", exact: true }).click();
+  28 |   await expect(page).toHaveURL(/.*dashboard/);
+  29 | });
+  30 | 
+```
