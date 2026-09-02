@@ -19,6 +19,8 @@ export type CaseStatus =
 
 export type SimulationOutcome = "recovered" | "promise" | "awaiting";
 
+export type AdapterMode = "live_test" | "simulated" | "fallback" | "blocked";
+
 export type RecoveryCase = {
   id: string;
   kind: RecoveryKind;
@@ -65,4 +67,29 @@ export type AuditEvent = {
   title: string;
   detail: string;
   type: "signal" | "ai" | "policy" | "action" | "recovery";
+  adapterMode?: AdapterMode;
+};
+
+export type Diagnosis = {
+  rootCause: string;
+  riskSummary: string;
+  recommendedAction: string;
+  recommendedChannel: RecoveryCase["channel"];
+  customerSafeCopy: string;
+  confidence: number;
+  evidence: string[];
+  humanReviewReason: string | null;
+  mode: AdapterMode;
+};
+
+export type DemoRun = {
+  id: string;
+  expiresAt: string;
+  mode: "supabase" | "fallback";
+};
+
+export type IntegrationHealth = {
+  name: "Supabase" | "Gemini" | "Razorpay Test Mode" | "Resend";
+  mode: AdapterMode;
+  detail: string;
 };

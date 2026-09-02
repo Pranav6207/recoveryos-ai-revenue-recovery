@@ -133,6 +133,7 @@ export function getInitialAudit(recoveryCase: RecoveryCase): AuditEvent[] {
       title: "Risk signal ingested",
       detail: recoveryCase.lastSignal,
       type: "signal",
+      adapterMode: "simulated",
     },
     {
       id: `${recoveryCase.id}-ai`,
@@ -141,6 +142,7 @@ export function getInitialAudit(recoveryCase: RecoveryCase): AuditEvent[] {
       title: "AI diagnosis completed",
       detail: recommendation.rationale,
       type: "ai",
+      adapterMode: "simulated",
     },
     {
       id: `${recoveryCase.id}-policy`,
@@ -149,6 +151,7 @@ export function getInitialAudit(recoveryCase: RecoveryCase): AuditEvent[] {
       title: policy.title,
       detail: policy.detail,
       type: "policy",
+      adapterMode: policy.allowed ? "simulated" : "blocked",
     },
   ];
 }
@@ -166,6 +169,7 @@ export function executeDemoAction(recoveryCase: RecoveryCase): {
     title: "Bounded recovery action executed",
     detail: `${recommendation.action} through the ${recommendation.channel} adapter.`,
     type: "action",
+    adapterMode: "simulated",
   };
 
   if (recoveryCase.simulationOutcome === "recovered") {
@@ -185,6 +189,7 @@ export function executeDemoAction(recoveryCase: RecoveryCase): {
           title: "Payment captured and attributed",
           detail: `INR ${formatCurrency(recoveryCase.amountAtRisk)} is counted once against ${recoveryCase.id}.`,
           type: "recovery",
+          adapterMode: "simulated",
         },
       ],
     };
@@ -207,6 +212,7 @@ export function executeDemoAction(recoveryCase: RecoveryCase): {
           title: "Promise-to-pay recorded",
           detail: "All automated chasing has been paused until the promised payment date.",
           type: "policy",
+          adapterMode: "simulated",
         },
       ],
     };
@@ -227,6 +233,7 @@ export function executeDemoAction(recoveryCase: RecoveryCase): {
         title: "Awaiting external confirmation",
         detail: "The case remains open. No additional action will run until a new signal or permitted window arrives.",
         type: "policy",
+        adapterMode: "simulated",
       },
     ],
   };
